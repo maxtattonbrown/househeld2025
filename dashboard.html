@@ -55,6 +55,34 @@
       margin: 0;
       color: #5f6368;
     }
+    .hero-status {
+      background-color: #e6f4ea;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      padding: 30px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .hero-icon {
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: 24px;
+      color: #137333;
+      margin: 0 0 10px 0;
+      font-weight: 400;
+    }
+    .hero-text {
+      font-size: 17px;
+      color: #1e8e3e;
+      max-width: 500px;
+      margin: 0 auto 15px auto;
+    }
+    .hero-details {
+      font-size: 15px;
+      color: #34a853;
+      margin: 5px 0 0 0;
+    }
     .section {
       background-color: #ffffff;
       border-radius: 8px;
@@ -77,22 +105,6 @@
     }
     .section-content {
       padding: 20px;
-    }
-    .status-banner {
-      background-color: #e6f4ea;
-      border-radius: 4px;
-      padding: 16px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-    }
-    .status-banner svg {
-      margin-right: 12px;
-      min-width: 24px;
-    }
-    .status-banner p {
-      margin: 0;
-      color: #137333;
     }
     .task {
       border: 1px solid #e8eaed;
@@ -273,22 +285,26 @@
   <div class="container">
     <div class="dashboard-header">
       <h1>Your Home Dashboard</h1>
-      <p>We're taking care of your maintenance schedule</p>
+      <p>We're taking care of everything for you</p>
+    </div>
+
+    <div class="hero-status">
+      <div class="hero-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#137333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h2 class="hero-title">Your home is completely up to date</h2>
+      <p class="hero-text">All maintenance is being handled automatically. You don't need to do anything - we'll contact the right people at the right time.</p>
+      <p class="hero-details">Next tasks: Roof Inspection and Solar Panel Cleaning in April</p>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <h2>Current Status</h2>
+        <h2>Upcoming Maintenance</h2>
       </div>
       <div class="section-content">
-        <div class="status-banner">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#137333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
-          <p>Your home is up to date. We're handling 2 upcoming maintenance tasks for April.</p>
-        </div>
-
         <div class="task">
           <div class="task-header" onclick="toggleTask(this.parentNode)">
             <div class="task-title">
@@ -369,7 +385,7 @@
 
     <div class="section">
       <div class="section-header">
-        <h2>Coming Up</h2>
+        <h2>Coming Up Later This Year</h2>
       </div>
       <div class="section-content">
         <ul class="upcoming">
