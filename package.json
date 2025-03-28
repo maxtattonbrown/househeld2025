@@ -1,0 +1,21 @@
+{
+  "name": "househeld",
+  "version": "0.1.0",
+  "description": "Home maintenance management system - MVP",
+  "main": "email_sender.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node email_sender.js",
+    "send-email": "SEND_EMAIL=true node email_sender.js"
+  },
+  "keywords": [
+    "home",
+    "maintenance",
+    "property"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "nodemailer": "^6.9.1"
+  }
+}

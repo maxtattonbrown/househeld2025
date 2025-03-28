@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HouseHeld Maintenance Scheduler</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 20px;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+    h1 { 
+      color: #2c3e50;
+      font-weight: normal;
+    }
+    .month { margin-bottom: 30px; }
+    .month h2 { 
+      background-color: #f8f9fa;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      color: #2c3e50;
+      font-weight: normal;
+    }
+    .job {
+      border-left: 4px solid #ddd;
+      padding: 15px;
+      margin-bottom: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .job.high { border-left-color: #3498db; }
+    .job.medium-high { border-left-color: #2ecc71; }
+    .job.medium { border-left-color: #f1c40f; }
+    .job.low-medium, .job.low { border-left-color: #95a5a6; }
+    .job h3 { 
+      margin-top: 0;
+      color: #2c3e50;
+      font-weight: normal;
+    }
+    .job-meta { color: #666; font-size: 0.9em; margin-bottom: 8px; }
+    .job-description { margin-bottom: 10px; }
+    .job-details { display: flex; justify-content: space-between; flex-wrap: wrap; }
+    .job-details div { flex: 1; min-width: 200px; }
+    #loading { font-size: 18px; margin: 20px 0; color: #666; }
+    #error { color: red; font-weight: bold; }
+    .job-tradespeople {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    .job-tradespeople ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0;
+    }
+    .job-tradespeople li {
+      margin-bottom: 10px;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+    .job-tradespeople li > div {
+      margin: 4px 0;
+      color: #444;
+    }
+    .job-tradespeople .notes {
+      margin-top: 8px;
+      font-style: italic;
+      color: #666;
+      font-size: 0.9em;
+    }
+    .job-tradespeople a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    .job-tradespeople a:hover {
+      text-decoration: underline;
+    }
+    .view-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    .view-toggle:hover {
+      background-color: #2980b9;
+    }
+    .month.hidden {
+      display: none;
+    }
+    .job.hidden {
+      display: none;
+    }
+    .priority-summary {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .priority-summary h2 {
+      color: #3498db;
+      margin-top: 0;
+      font-weight: normal;
+    }
+    .priority-summary p {
+      color: #7f8c8d;
+      margin: 0;
+    }
+    .welcome-message {
+      font-size: 1.1em;
+      color: #7f8c8d;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Home Maintenance Guide</h1>
+  <button id="viewToggle" class="view-toggle">Show All Tasks</button>
+  <div id="loading">Getting your personalized maintenance schedule...</div>
+  <div id="error" style="display: none;"></div>
+  <div id="schedule-container" style="display: none;">
+    <p id="property-info"></p>
+    <div id="schedule"></div>
+  </div>
+
+  <script>
+    // Add global state for view mode
+    let isAdminView = false;
+    
+    // Get home profile and jobs from files
+    async function fetchData() {
+      try {
+        const homeProfileResponse = await fetch('home_profile.json');
+        const jobsResponse = await fetch('jobs.json');
+        const tradespeopleResponse = await fetch('tradespeople.json');
+        
+        if (!homeProfileResponse.ok || !jobsResponse.ok || !tradespeopleResponse.ok) {
+          throw new Error('Could not load data files');
+        }
+        
+        const homeProfile = await homeProfileResponse.json();
+        const jobsDatabase = await jobsResponse.json();
+        const tradespeopleData = await tradespeopleResponse.json();
+        
+        return { homeProfile, jobsDatabase, tradespeopleData };
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').textContent = 'Error loading data: ' + error.message;
+        throw error;
+      }
+    }
+    
+    // Month mapping for season-based scheduling
+    const seasonToMonths = {
+      "Spring": [3, 4, 5],
+      "Summer": [6, 7, 8],
+      "Autumn": [9, 10, 11],
+      "Winter": [12, 1, 2],
+      "Spring/Summer": [4, 5, 6, 7],
+      "Autumn/Winter": [10, 11, 12, 1],
+      "Spring and Autumn": [4, 10],
+      "Any": [3, 6, 9, 12], // quarterly
+      "Autumn/Early Winter": [10, 11]
+    };
+    
+    // Parse complex seasons
+    function getMonthsForSeason(season) {
+      // Handle direct matches first
+      if (seasonToMonths[season]) {
+        return seasonToMonths[season];
+      }
+      
+      // Handle more complex descriptions
+      if (season.includes("Summer") && season.includes("Autumn")) {
+        return [8, 9]; // Late summer/early autumn
+      }
+      
+      // Default
+      console.log(`Couldn't parse season: ${season}`);
+      return [6];
+    }
+    
+    // Match jobs to this home profile
+    function matchJobs(homeProfile, jobsDatabase) {
+      const matchedJobs = [];
+      
+      jobsDatabase.forEach(job => {
+        // Skip jobs that don't apply to this property age
+        if (!job.applicablePropertyAges.includes(homeProfile.property.age)) {
+          return;
+        }
+        
+        // Skip jobs for features this home doesn't have
+        if (
+          (job.name.includes("Solar") && !homeProfile.exterior.hasSolarPanels) ||
+          (job.name.includes("Battery") && !homeProfile.services.hasBattery) ||
+          (job.name.includes("Septic") && !homeProfile.services.water.hasSepticTank) ||
+          (job.name.includes("Oil") && homeProfile.services.heating.primaryType !== "Oil boiler") ||
+          (job.name.includes("Chimney") && !homeProfile.exterior.roof.hasChimney) ||
+          (job.name.includes("Conservatory") && !homeProfile.exterior.hasConservatory) ||
+          (job.name.includes("Heat Pump") && !homeProfile.services.heating.primaryType.includes("Heat pump"))
+        ) {
+          return;
+        }
+        
+        // Handle specific driveway types
+        if (job.name.includes("Driveway")) {
+          // Skip if it's a specific driveway job that doesn't match this home's driveway
+          if (job.name.toLowerCase().includes("gravel") && homeProfile.grounds.drivewayType !== "Gravel") {
+            return;
+          }
+          if (job.name.toLowerCase().includes("block paving") && homeProfile.grounds.drivewayType !== "Block Paving") {
+            return;
+          }
+          if (job.name.toLowerCase().includes("tarmac") && homeProfile.grounds.drivewayType !== "Tarmac") {
+            return;
+          }
+        }
+        
+        // This job applies - add it to matched jobs
+        matchedJobs.push(job);
+      });
+      
+      return matchedJobs;
+    }
+    
+    // Schedule jobs across the year based on their recommended season
+    function scheduleJobs(matchedJobs) {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
+      
+      const scheduledJobs = [];
+      
+      matchedJobs.forEach(job => {
+        // Get appropriate months for this job
+        const months = getMonthsForSeason(job.season);
+        
+        // For the MVP, just pick the first available month that hasn't passed yet this year
+        let scheduledMonth = months[0];
+        for (const month of months) {
+          if (month >= currentMonth) {
+            scheduledMonth = month;
+            break;
+          }
+        }
+        
+        // If all recommended months have passed, schedule for next year's first recommended month
+        if (scheduledMonth < currentMonth) {
+          scheduledJobs.push({
+            ...job,
+            scheduledMonth,
+            scheduledYear: currentYear + 1
+          });
+        } else {
+          scheduledJobs.push({
+            ...job,
+            scheduledMonth,
+            scheduledYear: currentYear
+          });
+        }
+      });
+      
+      // Sort jobs by scheduled date
+      return scheduledJobs.sort((a, b) => {
+        if (a.scheduledYear !== b.scheduledYear) {
+          return a.scheduledYear - b.scheduledYear;
+        }
+        return a.scheduledMonth - b.scheduledMonth;
+      });
+    }
+    
+    // Find relevant tradespeople for a job
+    function findRelevantTradespeople(job, tradespeopleData) {
+      const relevantTrades = [];
+      
+      tradespeopleData.trades.forEach(trade => {
+        // Check if trade's category matches job's area
+        const tradeCategory = tradespeopleData.categories.find(cat => cat.id === trade.category);
+        if (tradeCategory && tradeCategory.areas.includes(job.area)) {
+          // Check if trade's tags match job keywords
+          const jobKeywords = job.name.toLowerCase().split(' ');
+          const hasMatchingTag = trade.tags.some(tag => {
+            const tagData = tradespeopleData.tagList.find(t => t.name === tag);
+            return tagData && tagData.keywords.some(keyword => 
+              jobKeywords.includes(keyword.toLowerCase())
+            );
+          });
+          
+          if (hasMatchingTag) {
+            relevantTrades.push(trade);
+          }
+        }
+      });
+      
+      return relevantTrades;
+    }
+
+    // Filter jobs by priority and current month
+    function filterPriorityJobs(jobs) {
+      const now = new Date();
+      const currentMonth = now.getMonth() + 1;
+      const currentYear = now.getFullYear();
+      
+      return jobs.filter(job => {
+        const isPriority = job.priority.toLowerCase() === 'high' || job.priority.toLowerCase() === 'critical';
+        const isCurrentMonth = job.scheduledMonth === currentMonth && job.scheduledYear === currentYear;
+        return isPriority && isCurrentMonth;
+      });
+    }
+
+    // Render the schedule as HTML
+    function renderSchedule(homeProfile, scheduledJobs, tradespeopleData) {
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      
+      document.getElementById('property-info').textContent = 
+        `${homeProfile.property.type} home built in ${homeProfile.property.age}`;
+      
+      // Filter jobs based on view mode
+      const jobsToShow = isAdminView ? scheduledJobs : filterPriorityJobs(scheduledJobs);
+      
+      const scheduleContainer = document.getElementById('schedule');
+      scheduleContainer.innerHTML = ''; // Clear existing content
+      
+      // Add welcome message and priority summary if in default view
+      if (!isAdminView) {
+        const now = new Date();
+        const currentMonth = months[now.getMonth()];
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.className = 'welcome-message';
+        welcomeDiv.innerHTML = `
+          Welcome to your maintenance guide for ${currentMonth}. We've highlighted the key tasks that will help keep your home running smoothly.
+        `;
+        scheduleContainer.appendChild(welcomeDiv);
+
+        if (jobsToShow.length > 0) {
+          const priorityDiv = document.createElement('div');
+          priorityDiv.className = 'priority-summary';
+          priorityDiv.innerHTML = `
+            <h2>This Month's Focus</h2>
+            <p>We've identified ${jobsToShow.length} task${jobsToShow.length === 1 ? '' : 's'} that would be good to look at this month. Each one helps maintain the value and safety of your home.</p>
+          `;
+          scheduleContainer.appendChild(priorityDiv);
+        } else {
+          const noPriorityDiv = document.createElement('div');
+          noPriorityDiv.className = 'priority-summary';
+          noPriorityDiv.innerHTML = `
+            <h2>All Set for ${currentMonth}</h2>
+            <p>No priority maintenance tasks this month - your home is in good shape! Check back next month for upcoming maintenance recommendations.</p>
+          `;
+          scheduleContainer.appendChild(noPriorityDiv);
+        }
+      }
+      
+      // Group jobs by month/year
+      const jobsByMonth = {};
+      jobsToShow.forEach(job => {
+        const key = `${job.scheduledYear}-${job.scheduledMonth}`;
+        if (!jobsByMonth[key]) {
+          jobsByMonth[key] = [];
+        }
+        jobsByMonth[key].push(job);
+      });
+      
+      // Add each month to the HTML
+      Object.keys(jobsByMonth).sort().forEach(key => {
+        const [year, month] = key.split('-');
+        const monthName = months[parseInt(month) - 1];
+        
+        const monthDiv = document.createElement('div');
+        monthDiv.className = 'month';
+        
+        const monthHeader = document.createElement('h2');
+        monthHeader.textContent = `${monthName} ${year}`;
+        monthDiv.appendChild(monthHeader);
+        
+        jobsByMonth[key].forEach(job => {
+          const priorityClass = job.priority.toLowerCase().replace(' ', '-');
+          const relevantTrades = findRelevantTradespeople(job, tradespeopleData);
+          
+          const jobDiv = document.createElement('div');
+          jobDiv.className = `job ${priorityClass}`;
+          
+          let tradespeopleHtml = '';
+          if (relevantTrades.length > 0) {
+            tradespeopleHtml = `
+              <div class="job-tradespeople">
+                <strong>Recommended Tradespeople:</strong>
+                <ul>
+                  ${relevantTrades.map(trade => `
+                    <li>
+                      <strong>${trade.company || trade.name}</strong>
+                      ${trade.phone ? `<div>Tel: ${trade.phone}</div>` : ''}
+                      ${trade.email ? `<div>Email: ${trade.email}</div>` : ''}
+                      ${trade.website ? `<div>Web: <a href="${trade.website}" target="_blank">${trade.website}</a></div>` : ''}
+                      ${trade.notes ? `<div class="notes">${trade.notes}</div>` : ''}
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+            `;
+          }
+          
+          jobDiv.innerHTML = `
+            <h3>${job.name}</h3>
+            <div class="job-meta">
+              <strong>Area:</strong> ${job.area} - ${job.subarea} | 
+              <strong>Priority:</strong> ${job.priority} | 
+              <strong>Frequency:</strong> ${job.frequency}
+            </div>
+            <div class="job-description">${job.description}</div>
+            <div class="job-details">
+              <div><strong>Estimated Cost:</strong> ${job.costEstimate}</div>
+            </div>
+            ${tradespeopleHtml}
+          `;
+          
+          monthDiv.appendChild(jobDiv);
+        });
+        
+        scheduleContainer.appendChild(monthDiv);
+      });
+    }
+    
+    // Toggle view handler
+    function toggleView() {
+      const button = document.getElementById('viewToggle');
+      isAdminView = !isAdminView;
+      button.textContent = isAdminView ? 'Show Priority Tasks' : 'Show All Tasks';
+      
+      // Re-render the schedule with the new view mode
+      renderSchedule(globalHomeProfile, globalScheduledJobs, globalTradespeopleData);
+    }
+    
+    // Main function
+    async function init() {
+      try {
+        const { homeProfile, jobsDatabase, tradespeopleData } = await fetchData();
+        globalHomeProfile = homeProfile;
+        globalTradespeopleData = tradespeopleData;
+        
+        // Run the matching and scheduling logic
+        const matchedJobs = matchJobs(homeProfile, jobsDatabase);
+        console.log(`Found ${matchedJobs.length} matching jobs for this property`);
+        
+        globalScheduledJobs = scheduleJobs(matchedJobs);
+        
+        // Hide loading message and show results
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('schedule-container').style.display = 'block';
+        
+        // Add toggle button handler
+        document.getElementById('viewToggle').addEventListener('click', toggleView);
+        
+        // Render the schedule
+        renderSchedule(homeProfile, globalScheduledJobs, tradespeopleData);
+      } catch (error) {
+        console.error('Error initializing:', error);
+      }
+    }
+    
+    // Start everything when the page loads
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
