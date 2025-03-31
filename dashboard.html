@@ -13,6 +13,7 @@
       padding: 0;
       background-color: #f8f9fa;
     }
+
     .nav {
       background-color: white;
       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -21,40 +22,124 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .logo {
       font-size: 22px;
       font-weight: 500;
       color: #4285f4;
       text-decoration: none;
     }
-    .user-menu {
-      display: flex;
-      align-items: center;
-    }
-    .user-menu a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #5f6368;
-      font-size: 14px;
-    }
+
     .container {
       max-width: 800px;
       margin: 30px auto;
       padding: 0 20px;
     }
-    .dashboard-header {
-      margin-bottom: 30px;
-    }
+
     .dashboard-header h1 {
-      margin: 0 0 5px 0;
+      margin: 0 0 30px 0;
       color: #202124;
       font-weight: 400;
       font-size: 28px;
     }
-    .dashboard-header p {
+
+    .task {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .task-header {
+      padding: 16px;
+      cursor: pointer;
+    }
+
+    .task-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .task-title h3 {
       margin: 0;
+      font-size: 16px;
+      color: #202124;
+    }
+
+    .task-content {
+      display: none;
+      padding: 20px;
+      border-top: 1px solid #e8eaed;
+    }
+
+    .task.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      margin: 0;
+      border-radius: 0;
+      overflow-y: auto;
+      background: white;
+    }
+
+    .back-button {
+      display: none;
+      width: 100%;
+      padding: 16px;
+      background: white;
+      border: none;
+      text-align: left;
+      font-size: 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    .task.fullscreen .back-button {
+      display: block;
+      position: sticky;
+      top: 0;
+    }
+
+    .message-buttons {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .message-preview {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 4px;
+      margin: 12px 0;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      background: white;
+      color: #4285f4;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
       color: #5f6368;
     }
+
+    .feedback-banner {
+      background-color: #e8f0fe;
+      padding: 20px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
     .hero-status {
       background-color: #e6f4ea;
       border-radius: 8px;
@@ -63,223 +148,239 @@
       margin-bottom: 30px;
       text-align: center;
     }
+
     .hero-icon {
       margin-bottom: 20px;
     }
+
     .hero-title {
       font-size: 24px;
       color: #137333;
       margin: 0 0 10px 0;
       font-weight: 400;
     }
+
     .hero-text {
       font-size: 17px;
       color: #1e8e3e;
       max-width: 500px;
-      margin: 0 auto 15px auto;
+      margin: 0 auto;
     }
-    .hero-details {
-      font-size: 15px;
-      color: #34a853;
-      margin: 5px 0 0 0;
-    }
-    .section {
-      background-color: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+
+    .task-summary {
       margin-bottom: 30px;
     }
-    .section-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #e8eaed;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .section-header h2 {
-      margin: 0;
-      font-weight: 400;
+
+    .task-summary h3 {
       color: #202124;
       font-size: 20px;
+      font-weight: 400;
+      margin: 0 0 16px 0;
     }
-    .section-content {
-      padding: 20px;
-    }
-    .task {
-      border: 1px solid #e8eaed;
+
+    .managed-tasks-bar {
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 8px;
-      margin-bottom: 16px;
-      background-color: white;
-    }
-    .task-header {
       padding: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .managed-tasks-summary {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #e8eaed;
-      cursor: pointer;
-    }
-    .task-title {
-      display: flex;
-      align-items: center;
-      flex: 1;
-    }
-    .task-title h3 {
-      margin: 0;
+      color: #137333;
       font-weight: 500;
-      color: #202124;
-      font-size: 16px;
     }
+
+    .managed-tasks-details {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(19, 115, 51, 0.1);
+    }
+
+    .managed-tasks-bar.expanded .managed-tasks-details {
+      display: block;
+    }
+
+    .managed-task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      color: #1e8e3e;
+    }
+
     .priority-tag {
       font-size: 12px;
       padding: 3px 10px;
       border-radius: 12px;
       color: white;
-      margin-left: 12px;
-    }
-    .priority-tag.high {
       background-color: #4285f4;
     }
-    .priority-tag.medium {
-      background-color: #34a853;
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    .task-date {
-      font-size: 14px;
-      color: #5f6368;
+
+    .task {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-    .task-detail {
+
+    .task.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      margin: 0;
+      border-radius: 0;
+      overflow-y: auto;
+    }
+
+    .back-button {
+      display: none;
+      width: 100%;
       padding: 16px;
-      display: none; /* Hidden by default */
+      background: white;
+      border: none;
+      text-align: left;
+      font-size: 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #e8eaed;
     }
-    .task.expanded .task-detail {
+
+    .task.fullscreen .back-button {
+      display: block;
+      position: sticky;
+      top: 0;
+    }
+
+    .task-header {
+      padding: 16px;
+      cursor: pointer;
+    }
+
+    .task-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .task-title h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #202124;
+    }
+
+    .priority-tag {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      color: white;
+      background-color: #4285f4;
+    }
+
+    .due-date {
+      color: #5f6368;
+      font-size: 14px;
+    }
+
+    .task-content {
+      display: none;
+      padding: 20px;
+      border-top: 1px solid #e8eaed;
+    }
+
+    .task.fullscreen .task-content {
       display: block;
     }
-    .task-meta {
-      font-size: 14px;
-      margin-bottom: 12px;
-      color: #5f6368;
+
+    .message-section {
+      margin-top: 24px;
     }
-    .task-description {
-      margin-bottom: 20px;
-      color: #3c4043;
-    }
-    .scheduling {
-      margin: 20px 0;
-      padding: 15px;
-      background-color: #e8f0fe;
-      border-radius: 8px;
-      color: #174ea6;
-      font-size: 15px;
-    }
-    .pro-email {
-      background-color: #f8f9fa;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 8px;
-      border: 1px solid #e8eaed;
-    }
-    .pro-email h4 {
-      margin-top: 0;
-      margin-bottom: 15px;
+
+    .message-section h4 {
+      margin: 0 0 12px 0;
       color: #202124;
-      font-weight: 500;
-      font-size: 16px;
+      font-size: 14px;
     }
-    .pro-email p {
-      margin: 8px 0;
+
+    .message-preview {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-size: 14px;
       color: #3c4043;
     }
-    .task-action {
-      margin-top: 20px;
-      text-align: right;
+
+    .message-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
     }
+
     .btn {
-      display: inline-block;
-      background-color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      background: white;
       color: #4285f4;
       text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 4px;
       font-size: 14px;
-      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .action-choice {
+      margin: 24px 0;
+      text-align: center;
+    }
+
+    .action-choice h4 {
+      margin-bottom: 16px;
+      color: #202124;
+    }
+
+    .choice-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .choice-btn {
+      padding: 16px;
       border: 1px solid #dadce0;
+      border-radius: 8px;
+      background: white;
+      color: #4285f4;
+      font-size: 16px;
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    .btn:hover {
-      background-color: #f8f9fa;
-    }
-    .btn-primary {
-      background-color: #4285f4;
+
+    .choice-btn.active {
+      background: #4285f4;
       color: white;
-      border: none;
-    }
-    .btn-primary:hover {
-      background-color: #1a73e8;
-    }
-    .upcoming {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .upcoming li {
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e8eaed;
-      display: flex;
-      justify-content: space-between;
-    }
-    .upcoming li:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-    .upcoming-task {
-      color: #3c4043;
-      font-weight: 500;
-    }
-    .upcoming-date {
-      color: #5f6368;
-      font-size: 14px;
-    }
-    .footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 13px;
-      color: #80868b;
-      border-top: 1px solid #e8eaed;
-      margin-top: 50px;
-    }
-    .chevron {
-      transition: transform 0.3s;
-    }
-    .task.expanded .chevron {
-      transform: rotate(180deg);
-    }
-    @media (max-width: 640px) {
-      .container {
-        padding: 0 15px;
-      }
-      .task-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .task-date {
-        margin-top: 8px;
-      }
+      border-color: #4285f4;
     }
   </style>
 </head>
 <body>
   <div class="nav">
     <a href="#" class="logo">HouseHeld</a>
-    <div class="user-menu">
-      <a href="#">Home</a>
-      <a href="#">Logbook</a>
-      <a href="#">Settings</a>
-      <a href="#">Help</a>
-    </div>
   </div>
 
   <div class="container">
@@ -287,120 +388,242 @@
       <h1>Welcome home, Max</h1>
     </div>
 
+    <!-- Hero Status -->
     <div class="hero-status">
-      <div class="hero-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#137333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
+      <div class="hero-icon">✓</div>
+      <h2 class="hero-title">Your home is being looked after</h2>
+      
+      <div class="managed-tasks-bar" onclick="toggleManagedTasks()">
+        <div class="managed-tasks-summary">
+          <span>Managing 3 essential tasks automatically</span>
+          <span>↓</span>
       </div>
-      <h2 class="hero-title">Your home is completely up to date</h2>
-      <p class="hero-text">Everything is under control. We'll contact the right people at the right time, and you can find all the details below.</p>
-      <p class="hero-details">Next tasks: Roof Inspection and Solar Panel Cleaning in April</p>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <h2>Upcoming Maintenance</h2>
-      </div>
-      <div class="section-content">
-        <div class="task">
-          <div class="task-header" onclick="toggleTask(this.parentNode)">
-            <div class="task-title">
-              <h3>Roof Inspection</h3>
-              <span class="priority-tag high">High Priority</span>
-            </div>
-            <div class="task-date">April 2nd</div>
-            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+        <div class="managed-tasks-details">
+          <div class="managed-task">
+            <span>Annual Boiler Service</span>
+            <span>Every October</span>
           </div>
-          <div class="task-detail">
-            <div class="task-meta">
-              Est. Cost: £100-250
-            </div>
-            <div class="task-description">Check for loose, damaged or missing tiles/slates to prevent leaks and water damage. This is important before the spring rain.</div>
-            
-            <div class="scheduling">
-              Summit Roofing will be contacted on April 2nd
-            </div>
-            
-            <div class="pro-email">
-              <h4>Email that will be sent:</h4>
-              <p><strong>To:</strong> mark@summitroofingltd.com</p>
-              <p><strong>Subject:</strong> Roof Inspection Request - Max Tatton-Brown</p>
-              <p>Hello Mark,</p>
-              <p>My client Max Tatton-Brown needs his annual roof inspection at his property in Aston Abbots. Would you have availability in the next 2-3 weeks?</p>
-              <p>The property is a detached house built between 1950-1980 with a pitched tile roof.</p>
-              <p>Please let me know your availability and approximate cost.</p>
-              <p>Thanks,<br>HouseHeld Support</p>
-            </div>
-            
-            <div class="task-action">
-              <a href="#" class="btn">Let me change this first</a>
-            </div>
+          <div class="managed-task">
+            <span>Gutter Cleaning</span>
+            <span>Spring & Autumn</span>
           </div>
-        </div>
-
-        <div class="task">
-          <div class="task-header" onclick="toggleTask(this.parentNode)">
-            <div class="task-title">
-              <h3>Solar Panel Cleaning</h3>
-              <span class="priority-tag medium">Medium Priority</span>
-            </div>
-            <div class="task-date">April 5th</div>
-            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </div>
-          <div class="task-detail">
-            <div class="task-meta">
-              Est. Cost: £100-200
-            </div>
-            <div class="task-description">Your solar panels need cleaning to remove winter debris and maximize efficiency during the sunnier months ahead.</div>
-            
-            <div class="scheduling">
-              Clearview Cleaning will be contacted on April 5th
-            </div>
-            
-            <div class="pro-email">
-              <h4>Email that will be sent:</h4>
-              <p><strong>To:</strong> clearviewcleaningsolutions@gmail.com</p>
-              <p><strong>Subject:</strong> Solar Panel Cleaning - Max Tatton-Brown</p>
-              <p>Hello Tom,</p>
-              <p>My client Max Tatton-Brown would like to schedule the annual cleaning of his solar panels at his property in Aston Abbots.</p>
-              <p>The installation is approximately 12 panels on a pitched roof. Access is via the driveway on the south side.</p>
-              <p>Please let me know your availability in April and approximate cost.</p>
-              <p>Thanks,<br>HouseHeld Support</p>
-            </div>
-            
-            <div class="task-action">
-              <a href="#" class="btn">Let me change this first</a>
-            </div>
+          <div class="managed-task">
+            <span>Window Cleaning</span>
+            <span>Every 3 months</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-header">
-        <h2>Up next</h2>
+    <!-- Tasks -->
+    <div class="task-summary">
+      <h3>Up next</h3>
+      <div id="task1" class="task">
+        <button class="back-button" onclick="closeTask('task1')">← Back to all tasks</button>
+        <div class="task-header" onclick="openTask('task1')">
+          <div class="task-title">
+            <h3>Annual Boiler Service</h3>
+            <span class="priority-tag">High Priority</span>
+            <span class="due-date">Due next month</span>
+          </div>
+        </div>
+        <div class="task-content">
+          <div class="task-details">
+            <p><strong>Est. Cost:</strong> £80-120</p>
+            <p>Annual service required by a Gas Safe registered engineer to ensure your boiler is running safely and efficiently.</p>
+          </div>
+          
+          <div class="action-choice">
+            <h4>What would you like to do?</h4>
+            <div class="choice-buttons">
+              <button onclick="showSection('quotes1', this)" class="choice-btn">
+                Get Quotes
+              </button>
+              <button onclick="showSection('recommendations1', this)" class="choice-btn">
+                Ask for Recommendations
+              </button>
+            </div>
+          </div>
+
+          <div id="quotes1" class="message-section" style="display: none;">
+            <div class="message-preview">
+              Hi, I need a quote for an annual boiler service. Must be Gas Safe registered. Could you help?
+            </div>
+            <div class="message-buttons">
+              <a href="whatsapp://send?text=Hi, I need a quote for an annual boiler service. Must be Gas Safe registered. Could you help?" class="btn">
+                📱 WhatsApp
+              </a>
+              <a href="sms:?&body=Hi, I need a quote for an annual boiler service. Must be Gas Safe registered. Could you help?" class="btn">
+                💬 Messages
+              </a>
+              <a href="mailto:?subject=Quote Request&body=Hi, I need a quote for an annual boiler service. Must be Gas Safe registered. Could you help?" class="btn">
+                ✉️ Email
+              </a>
+            </div>
+          </div>
+
+          <div id="recommendations1" class="message-section" style="display: none;">
+            <div class="message-preview">
+              Can anyone recommend a reliable Gas Safe registered engineer for an annual boiler service?
+            </div>
+            <div class="message-buttons">
+              <a href="whatsapp://send?text=Can anyone recommend a reliable Gas Safe registered engineer for an annual boiler service?" class="btn">
+                📱 WhatsApp
+              </a>
+              <a href="sms:?&body=Can anyone recommend a reliable Gas Safe registered engineer for an annual boiler service?" class="btn">
+                💬 Messages
+              </a>
+              <button onclick="copyText(this)" class="btn" data-text="Can anyone recommend a reliable Gas Safe registered engineer for an annual boiler service?">
+                📋 Copy
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="section-content">
-        <ul class="upcoming">
-          <li>
-            <span class="upcoming-task">External Door Maintenance</span>
-            <span class="upcoming-date">May 10th</span>
-          </li>
-          <li>
-            <span class="upcoming-task">Garden Drainage Check</span>
-            <span class="upcoming-date">May 18th</span>
-          </li>
-          <li>
-            <span class="upcoming-task">Gutter Cleaning</span>
-            <span class="upcoming-date">September 5th</span>
-          </li>
-        </ul>
+
+      <div id="task2" class="task">
+        <button class="back-button" onclick="closeTask('task2')">← Back to all tasks</button>
+        <div class="task-header" onclick="openTask('task2')">
+          <div class="task-title">
+            <h3>Roof Inspection</h3>
+            <span class="priority-tag">High Priority</span>
+            <span class="due-date">Due in 6 weeks</span>
+          </div>
+        </div>
+        <div class="task-content">
+          <div class="task-details">
+            <p><strong>Est. Cost:</strong> £100-250</p>
+            <p>Check for loose, damaged or missing tiles/slates to prevent leaks and water damage. Essential before the rainy season.</p>
+          </div>
+          
+          <div class="action-choice">
+            <h4>What would you like to do?</h4>
+            <div class="choice-buttons">
+              <button onclick="showSection('quotes2', this)" class="choice-btn">
+                Get Quotes
+              </button>
+              <button onclick="showSection('recommendations2', this)" class="choice-btn">
+                Ask for Recommendations
+              </button>
+            </div>
+          </div>
+
+          <div id="quotes2" class="message-section" style="display: none;">
+            <div class="message-preview">
+              Hi, I need a quote for a roof inspection to check for any damaged tiles or potential issues. Could you help?
+            </div>
+            <div class="message-buttons">
+              <a href="whatsapp://send?text=Hi, I need a quote for a roof inspection to check for any damaged tiles or potential issues. Could you help?" class="btn">
+                📱 WhatsApp
+              </a>
+              <a href="sms:?&body=Hi, I need a quote for a roof inspection to check for any damaged tiles or potential issues. Could you help?" class="btn">
+                💬 Messages
+              </a>
+              <a href="mailto:?subject=Quote Request&body=Hi, I need a quote for a roof inspection to check for any damaged tiles or potential issues. Could you help?" class="btn">
+                ✉️ Email
+              </a>
+            </div>
+          </div>
+
+          <div id="recommendations2" class="message-section" style="display: none;">
+            <div class="message-preview">
+              Can anyone recommend a reliable roofer for an inspection? Need to check for damaged tiles and potential issues.
+            </div>
+            <div class="message-buttons">
+              <a href="whatsapp://send?text=Can anyone recommend a reliable roofer for an inspection? Need to check for damaged tiles and potential issues." class="btn">
+                📱 WhatsApp
+              </a>
+              <a href="sms:?&body=Can anyone recommend a reliable roofer for an inspection? Need to check for damaged tiles and potential issues." class="btn">
+                💬 Messages
+              </a>
+              <button onclick="copyText(this)" class="btn" data-text="Can anyone recommend a reliable roofer for an inspection? Need to check for damaged tiles and potential issues.">
+                📋 Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="task3" class="task">
+        <button class="back-button" onclick="closeTask('task3')">← Back to all tasks</button>
+        <div class="task-header" onclick="openTask('task3')">
+          <div class="task-title">
+            <h3>Fire Alarm Check</h3>
+            <span class="priority-tag">High Priority</span>
+            <span class="due-date">Due in 8 weeks</span>
+          </div>
+        </div>
+        <div class="task-content">
+          <div class="task-details">
+            <p><strong>Est. Cost:</strong> £50-100</p>
+            <p>Test and service smoke/carbon monoxide detectors. Replace batteries and check sensors to ensure your home's safety systems are working properly.</p>
+          </div>
+          
+          <div class="action-choice">
+            <h4>What would you like to do?</h4>
+            <div class="choice-buttons">
+              <button onclick="showSection('quotes3', this)" class="choice-btn">
+                Get Quotes
+              </button>
+              <button onclick="showSection('recommendations3', this)" class="choice-btn">
+                Ask for Recommendations
+              </button>
+            </div>
+          </div>
+
+          <div id="quotes3" class="message-section" style="display: none;">
+            <div class="message-preview">
+              Hi, I need a quote for a fire alarm system check and service, including smoke and carbon monoxide detectors. Could you help?
+            </div>
+            <div class="message-buttons">
+              <a href="whatsapp://send?text=Hi, I need a quote for a fire alarm system check and service, including smoke and carbon monoxide detectors. Could you help?" class="btn">
+                📱 WhatsApp
+              </a>
+              <a href="sms:?&body=Hi, I need a quote for a fire alarm system check and service, including smoke and carbon monoxide detectors. Could you help?" class="btn">
+                💬 Messages
+              </a>
+              <a href="mailto:?subject=Quote Request&body=Hi, I need a quote for a fire alarm system check and service, including smoke and carbon monoxide detectors. Could you help?" class="btn">
+                ✉️ Email
+              </a>
+            </div>
+          </div>
+
+          <div id="recommendations3" class="message-section" style="display: none;">
+            <div class="message-preview">
+              Can anyone recommend a reliable fire safety specialist for alarm system checks and carbon monoxide detectors?
+            </div>
+            <div class="message-buttons">
+              <a href="whatsapp://send?text=Can anyone recommend a reliable fire safety specialist for alarm system checks and carbon monoxide detectors?" class="btn">
+                📱 WhatsApp
+              </a>
+              <a href="sms:?&body=Can anyone recommend a reliable fire safety specialist for alarm system checks and carbon monoxide detectors?" class="btn">
+                💬 Messages
+              </a>
+              <button onclick="copyText(this)" class="btn" data-text="Can anyone recommend a reliable fire safety specialist for alarm system checks and carbon monoxide detectors?">
+                📋 Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feedback-banner">
+    <div style="max-width: 800px; margin: 0 auto;">
+      <p style="margin: 0 0 16px 0; color: #1a73e8; font-weight: 500;">
+        Thank you for testing HouseHeld — a new app that automates the most important tasks to maintain your home.
+      </p>
+      <p style="margin: 0 0 20px 0;">Would this be useful for managing your home?</p>
+      <div style="display: flex; gap: 16px; justify-content: center;">
+        <a href="mailto:maxtattonbrown+HH@gmail.com?subject=Yes - HouseHeld would be useful" 
+           style="background-color: #34a853; color: white; padding: 12px 32px; border-radius: 4px; text-decoration: none;">
+          YES
+        </a>
+        <a href="mailto:maxtattonbrown+HH@gmail.com?subject=No - HouseHeld wouldn't be useful" 
+           style="background-color: #ea4335; color: white; padding: 12px 32px; border-radius: 4px; text-decoration: none;">
+          NO
+        </a>
       </div>
     </div>
   </div>
@@ -410,8 +633,61 @@
   </div>
 
   <script>
-    function toggleTask(taskElement) {
-      taskElement.classList.toggle('expanded');
+    function openTask(taskId) {
+      document.getElementById(taskId).classList.add('fullscreen');
+      // Hide all sections when opening task
+      hideAllSections(taskId);
+      // Remove active state from buttons
+      document.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function closeTask(taskId) {
+      document.getElementById(taskId).classList.remove('fullscreen');
+    }
+
+    function showSection(section, button) {
+      const currentSection = document.getElementById(section);
+      const taskId = button.closest('.task').id;
+      
+      // If clicking an already active button, hide everything
+      if (button.classList.contains('active')) {
+        hideAllSections(taskId);
+        button.classList.remove('active');
+        return;
+      }
+
+      // Hide all sections for this task
+      hideAllSections(taskId);
+      
+      // Show selected section
+      currentSection.style.display = 'block';
+      
+      // Update button styles
+      button.closest('.choice-buttons').querySelectorAll('.choice-btn')
+        .forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+
+    function hideAllSections(taskId) {
+      // Hide both quotes and recommendations sections for the task
+      document.getElementById(`quotes${taskId.replace('task', '')}`).style.display = 'none';
+      document.getElementById(`recommendations${taskId.replace('task', '')}`).style.display = 'none';
+    }
+
+    function copyText(button) {
+      const text = button.dataset.text;
+      navigator.clipboard.writeText(text);
+      const originalText = button.textContent;
+      button.textContent = '✓ Copied';
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 2000);
+    }
+
+    // Toggle managed tasks
+    function toggleManagedTasks() {
+      const bar = document.querySelector('.managed-tasks-bar');
+      bar.classList.toggle('expanded');
     }
   </script>
 </body>
